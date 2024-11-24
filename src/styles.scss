@@ -1,0 +1,189 @@
+@use "sass:map";
+
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap");
+
+$breakpoint-phone: 400px;
+$breakpoint-tablet: 800px;
+
+$typography-map: (
+  "title-medium": (
+    "line-height": 36px, 
+    "size": 28px,
+    "tracking": 0px,
+    "weight": 400
+  ),
+  "body-large": (
+    "line-height": 24px, 
+    "size": 16px,
+    "tracking": 0.15px,
+    "weight": 400
+  ),
+  "body-medium": (
+    "line-height": 20px, 
+    "size": 14px,
+    "tracking": 0.25px,
+    "weight": 400
+  ),
+);
+
+@mixin _private-apply-font($font-style) {
+  $font-map: map.get($typography-map, $font-style);
+  
+  font-size: map.get($font-map, "size");
+  font-weight: map.get($font-map, "weight");
+  letter-spacing: map.get($font-map, "tracking");
+  line-height: map.get($font-map, "line-height");
+}
+
+@mixin typography-title-medium {
+  @include _private-apply-font("title-medium");
+}
+
+@mixin typography-body-large {
+  @include _private-apply-font("body-large");
+}
+
+@mixin typography-body-medium {
+  @include _private-apply-font("body-medium");
+}
+
+:root{
+  color-scheme: light dark;
+  
+  // light theme colors
+  --md-sys-color-background-light: rgb(248 249 255);
+  --md-sys-color-surface-container-highest-light: rgb(225 226 232);
+   --md-sys-color-on-surface-light: rgb(25 28 32);
+  
+  
+  // dark theme colors
+  --md-sys-color-background-dark: rgb(17 20 24);
+  --md-sys-color-surface-container-highest-dark:  rgb(50 53 58);
+  --md-sys-color-on-surface-dark: rgb(225 226 232);
+  
+  // theme colors
+  --md-sys-color-background: light-dark(var(--md-sys-color-background-light), var(--md-sys-color-background-dark));
+  --md-sys-color-surface-container-highest:light-dark(var(--md-sys-color-surface-container-highest-light), var(--md-sys-color-surface-container-highest-dark));
+  --md-sys-color-on-surface:light-dark(var(--md-sys-color-on-surface-light), var(--md-sys-color-on-surface-dark));
+  
+}
+
+html,body {
+  margin: 0;
+  height:100dvh;
+}  
+
+body{
+  display: grid;
+  place-items: center;
+  font-family: "Roboto", serif;
+  
+  background-color: var(--md-sys-color-background);
+  
+}
+
+.conteiner{
+  padding: 16px;
+  margin:auto;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  gap: 16px;
+  
+  @media (width < #{$breakpoint-tablet}){
+    grid-template-columns: 1fr 1fr;
+    grid-auto-flow: row dense
+  }
+  
+  @media (width < #{$breakpoint-phone}){
+    grid-template-columns: 1fr;
+  }
+}  
+
+.card{
+  --_state-layer-display: none;
+
+  background-color: var( --md-sys-color-surface-container-highest);
+  display: grid;
+  border-radius: 12px;
+  position: relative;
+  isolation: isolate;
+ 
+
+  &__picture{
+    border-radius: 12px;
+    width: 100%;
+    height: 100%;
+    aspect-ratio: 1.4;
+    grid-row: picture;
+  }
+
+  &__content{
+    display: grid;
+    grid-template-columns: 1fr;  
+    grid-template-rows: [title-start] min-content
+    [title-end subtitle-start]  min-content
+    [subtitle-end text-start] 1fr
+    [text-end];
+    gap: 16px;
+    padding: 16px;
+    color: var(--md-sys-color-on-surface);
+    
+    &__title{
+      @include typography-title-medium;
+      grid-row: title;
+    }
+    
+    &__subtitle{
+      @include typography-body-large;
+      grid-row: subtitle;
+    }
+    
+    &__text{
+    @include typography-body-medium;
+      grid-row: text;
+    }
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-color: var(--md-sys-color-on-surface);
+    opacity: 0.08;
+    display: var(--_state-layer-display);
+    z-index: -1;
+  }
+
+  &:hover {
+    --_state-layer-display: block;
+  }
+  
+  &--vertical{
+     grid-template-rows: [picture-start] min-content
+      [picture-end title-start] min-content
+      [title-end subtitle-start]  min-content
+      [subtitle-end content-start] min-content
+      [content-end];
+     
+      @media ( width > #{$breakpoint-tablet}) {
+        grid-row: span 2;
+      }   
+  }
+
+  &--horizontal{
+    @media (width > #{$breakpoint-phone}) {
+        grid-column: span 2;
+        grid-template-columns: 1fr 1fr; 
+        grid-template-rows: [picture-start ] min-content 
+          [picture-end title-start] min-content [title-end subtitle-start] min-content
+          [subtitle-end content-start] 1fr
+          [content-end ]; 
+      }   
+  }
+}
+  
+ 
+
+
+
